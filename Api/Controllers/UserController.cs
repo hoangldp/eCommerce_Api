@@ -21,12 +21,24 @@ namespace Api.Controllers
         [HttpPost("authenticate")]
         public IActionResult Authenticate([FromBody] AuthenticateModel model)
         {
-            var user = _userService.Authenticate(model.Username, model.Password);
+            var token = _userService.Authenticate(model.Username, model.Password);
 
-            if (user == null)
+            if (token == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
 
-            return Ok(user);
+            return Ok(token);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("refresh")]
+        public IActionResult Refresh([FromBody] RefreshTokenModel model)
+        {
+            var token = _userService.RefreshToken(model.Token, model.RefreshToken);
+
+            if (token == null)
+                return BadRequest(new { message = "Token or refresh token is incorrect" });
+
+            return Ok(token);
         }
 
         [HttpGet]
