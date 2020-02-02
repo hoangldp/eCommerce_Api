@@ -88,7 +88,7 @@ namespace Api.Services
                     new Claim(ClaimTypes.Sid, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Username)
                 }),
-                Expires = DateTime.UtcNow.AddSeconds(10),
+                Expires = DateTime.UtcNow.AddSeconds(60),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
@@ -106,7 +106,7 @@ namespace Api.Services
                 {
                     new Claim(ClaimTypes.Name, token)
                 }),
-                Expires = DateTime.UtcNow.AddSeconds(60),
+                Expires = DateTime.UtcNow.AddMinutes(5),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
