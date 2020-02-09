@@ -1,4 +1,4 @@
-﻿namespace Api.Models
+﻿namespace Data
 {
     public class AuthenticateResponse
     {

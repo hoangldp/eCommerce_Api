@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Api.Entities;
-using Api.Models;
+using Data;
 
-namespace Api.Services
+namespace Core
 {
     public interface IUserService
     {

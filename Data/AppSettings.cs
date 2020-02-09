@@ -1,4 +1,4 @@
-﻿namespace Api.Helpers
+﻿namespace Data
 {
     public class AppSettings
     {

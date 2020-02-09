@@ -1,5 +1,6 @@
 ﻿using Api.Models;
 using Api.Services;
+using Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

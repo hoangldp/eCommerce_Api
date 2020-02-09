@@ -4,9 +4,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using Api.Entities;
-using Api.Helpers;
-using Api.Models;
+using Core;
+using Data;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
