@@ -8,6 +8,7 @@ using Core;
 using Data;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Model;
 
 namespace Api.Services
 {

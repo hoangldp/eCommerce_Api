@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Core;
+using Core.Engine;
 using Core.Finder;
-using Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Model;
+using Web.Framework.Engine;
 using Web.Framework.Finder;
 
 namespace Web.Framework.Extensions
@@ -21,6 +21,7 @@ namespace Web.Framework.Extensions
         /// </summary>
         /// <param name="services">Collection of service descriptors</param>
         /// <param name="configuration">Configuration of the application</param>
+        /// <param name="env">Web host environment</param>
         /// <returns>Configured service provider</returns>
         public static void ConfigureApplicationServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
@@ -68,22 +69,14 @@ namespace Web.Framework.Extensions
                     };
                 });
 
-            // configure DI for application services
-
             ICoreFileProvider coreFileProvider = new WebFileProvider(env);
             services.AddSingleton(coreFileProvider);
 
-            ITypeFinder typeFinder = new WebAppTypeFinder(coreFileProvider, null);
-            services.AddSingleton(typeFinder);
+            IEngine engine = new WebEngine();
+            services.AddSingleton(engine);
 
-            var configureDi = typeFinder.FindClassesOfType<IConfigureDependencyInjection>();
-
-            var instances = configureDi
-                .Select(di => (IConfigureDependencyInjection)Activator.CreateInstance(di))
-                .OrderBy(di => di.Order);
-
-            foreach (var instance in instances)
-                instance.Register(services, env.EnvironmentName);
+            EngineContext.Replace(engine);
+            EngineContext.Current.Initialize(services, coreFileProvider, env.EnvironmentName);
         }
     }
 }

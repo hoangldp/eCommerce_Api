@@ -1,4 +1,4 @@
-﻿namespace Data
+﻿namespace Model
 {
     public class AppSettings
     {
