@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Api.Services;
 using Core;
+using Core.Finder;
 using Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Web.Framework.Finder;
 
 namespace Web.Framework.Extensions
 {
@@ -19,7 +22,7 @@ namespace Web.Framework.Extensions
         /// <param name="services">Collection of service descriptors</param>
         /// <param name="configuration">Configuration of the application</param>
         /// <returns>Configured service provider</returns>
-        public static void ConfigureApplicationServices(this IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureApplicationServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
             services.AddCors();
             services.AddControllers().AddNewtonsoftJson();
@@ -66,7 +69,21 @@ namespace Web.Framework.Extensions
                 });
 
             // configure DI for application services
-            services.AddScoped<IUserService, UserService>();
+
+            ICoreFileProvider coreFileProvider = new WebFileProvider(env);
+            services.AddSingleton(coreFileProvider);
+
+            ITypeFinder typeFinder = new WebAppTypeFinder(coreFileProvider, null);
+            services.AddSingleton(typeFinder);
+
+            var configureDi = typeFinder.FindClassesOfType<IConfigureDependencyInjection>();
+
+            var instances = configureDi
+                .Select(di => (IConfigureDependencyInjection)Activator.CreateInstance(di))
+                .OrderBy(di => di.Order);
+
+            foreach (var instance in instances)
+                instance.Register(services, env.EnvironmentName);
         }
     }
 }
